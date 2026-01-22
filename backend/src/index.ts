@@ -85,7 +85,4 @@ export async function initializeApp() {
   }
 }
 
-// Initialize on module load
-initializeApp();
-
 export default app;
