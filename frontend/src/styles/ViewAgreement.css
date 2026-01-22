@@ -1,0 +1,279 @@
+.view-agreement-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.view-agreement-wrapper {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 1000px;
+  width: 100%;
+  padding: 50px;
+  margin-top: 20px;
+}
+
+.agreement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.header-title {
+  flex: 1;
+}
+
+.header-title h1 {
+  color: #333;
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-draft {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-sent {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-signed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-default {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  margin-left: 20px;
+}
+
+.header-actions .btn {
+  white-space: nowrap;
+}
+
+.agreement-details {
+  margin-bottom: 40px;
+}
+
+.detail-section {
+  margin-bottom: 35px;
+}
+
+.detail-section h2 {
+  color: #333;
+  font-size: 20px;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #667eea;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item label {
+  color: #666;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+
+.detail-item p {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.detail-item .amount {
+  font-size: 24px;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.status-text {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-text.status-draft {
+  color: #856404;
+}
+
+.status-text.status-sent {
+  color: #0c5460;
+}
+
+.status-text.status-signed {
+  color: #155724;
+}
+
+.terms-box {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  color: #333;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 14px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.audit-trail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.audit-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.audit-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #667eea;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.audit-content {
+  flex: 1;
+}
+
+.audit-action {
+  color: #333;
+  font-weight: 600;
+  margin: 0;
+  font-size: 16px;
+}
+
+.audit-date {
+  color: #999;
+  font-size: 14px;
+  margin: 5px 0 0 0;
+}
+
+.agreement-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.btn-danger:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: white;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .view-agreement-wrapper {
+    padding: 30px 20px;
+  }
+
+  .agreement-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .header-title h1 {
+    font-size: 24px;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+    margin-left: 0;
+  }
+
+  .header-actions .btn {
+    width: 100%;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .agreement-footer {
+    flex-direction: column;
+  }
+
+  .agreement-footer .btn {
+    width: 100%;
+  }
+}

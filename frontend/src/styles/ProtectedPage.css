@@ -1,0 +1,20 @@
+/* Protected Pages (with Sidebar) */
+
+.page-placeholder {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-placeholder h3 {
+  margin-top: 0;
+  font-size: 24px;
+  color: #1a1f35;
+}
+
+.page-placeholder p {
+  color: #6b7280;
+  margin: 10px 0;
+}
