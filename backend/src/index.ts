@@ -1,15 +1,48 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import path from 'path';
-import { initializeDatabase } from './models/database';
-import authRoutes from './routes/authRoutes';
-import agreementRoutes from './routes/agreementRoutes';
-import notificationRoutes from './routes/notificationRoutes';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import path from "path";
+
+import { initializeDatabase } from "./models/database";
+import authRoutes from "./routes/authRoutes";
+import agreementRoutes from "./routes/agreementRoutes";
+import notificationRoutes from "./routes/notificationRoutes";
 
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+
+/* =====================================================
+   GLOBAL MIDDLEWARE
+===================================================== */
+
+// CORS (adjust frontend URL if needed)
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://d-agreement.vercel.app"
+    ],
+    credentials: true
+  })
+);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+/* =====================================================
+   STATIC FILES
+===================================================== */
+
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+/* =====================================================
+   HEALTH & ROOT ROUTES (REQUIRED FOR RENDER)
+===================================================== */
+
 app.get("/", (req, res) => {
   res.status(200).json({
     status: "ok",
@@ -25,40 +58,36 @@ app.get("/api", (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
-
-// Middleware
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
-  credentials: true
-}));
-app.use(express.json());
-
-// Serve static files from uploads directory
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
-// Routes
-app.use('/auth', authRoutes);
-app.use('/api/agreements', agreementRoutes);
-app.use('/api/notifications', notificationRoutes);
-
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "healthy" });
 });
 
-// Start server
-async function start() {
+/* =====================================================
+   API ROUTES
+===================================================== */
+
+app.use("/api/auth", authRoutes);
+app.use("/api/agreements", agreementRoutes);
+app.use("/api/notifications", notificationRoutes);
+
+/* =====================================================
+   START SERVER (CRITICAL)
+===================================================== */
+
+async function startServer() {
   try {
     await initializeDatabase();
-    console.log('Database initialized');
+    console.log("✅ Database initialized");
 
-    
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error("❌ Failed to start server:", error);
     process.exit(1);
   }
 }
 
-start();
+startServer();
+
 export default app;
