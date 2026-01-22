@@ -75,7 +75,7 @@ const Dashboard: React.FC = () => {
   const handleSendAgreement = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/agreements/${id}/send`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/agreements/${id}/send`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ const Dashboard: React.FC = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/agreements/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/agreements/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
