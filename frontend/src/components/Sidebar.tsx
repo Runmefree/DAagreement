@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
   const fetchUnreadCount = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/notifications/unread-count', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/unread-count`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

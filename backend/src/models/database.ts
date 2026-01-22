@@ -16,8 +16,9 @@ const pool = new Pool({
   ssl: process.env.DB_SSL === 'require' ? { rejectUnauthorized: false } : false,
 });
 
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
+pool.on('error', (err: Error) => {
+  console.error('❌ Unexpected error on idle database client:', err);
+  // In production, you may want to alert/restart here
 });
 
 // Define Database interface with SQLite-compatible API

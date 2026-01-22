@@ -107,7 +107,7 @@ export const SignAgreement: React.FC = () => {
       setSubmitting(true);
       setError('');
 
-      const response = await fetch(`http://localhost:5000/api/agreements/sign/${id}/sign`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/agreements/sign/${id}/sign`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -140,7 +140,7 @@ export const SignAgreement: React.FC = () => {
       setSubmitting(true);
       setError('');
 
-      const response = await fetch(`http://localhost:5000/api/agreements/sign/${id}/reject`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/agreements/sign/${id}/reject`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

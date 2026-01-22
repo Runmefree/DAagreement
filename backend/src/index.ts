@@ -24,7 +24,8 @@ app.use(
       "http://localhost:5173",
       "http://localhost:3000",
       "http://localhost:3001",
-      "https://d-agreement.vercel.app"
+      "https://d-agreement.vercel.app",
+      "https://dagreement.onrender.com"
     ],
     credentials: true
   })

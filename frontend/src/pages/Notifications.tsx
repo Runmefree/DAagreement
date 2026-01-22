@@ -37,7 +37,7 @@ const NotificationsPage: React.FC = () => {
     try {
       console.log('Fetching notifications with token:', token?.substring(0, 20) + '...');
       
-      const response = await fetch('http://localhost:5000/api/notifications', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -68,7 +68,7 @@ const NotificationsPage: React.FC = () => {
 
   const handleMarkAsRead = async (notificationId: number) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/notifications/${notificationId}/read`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/${notificationId}/read`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -92,7 +92,7 @@ const NotificationsPage: React.FC = () => {
 
   const handleMarkAllAsRead = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/notifications/read-all', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/read-all`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,

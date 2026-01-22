@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || (() => {
+  throw new Error('JWT_SECRET environment variable is not set. Production requires a secure JWT_SECRET.');
+})();
 
 export interface TokenPayload {
   id: number;

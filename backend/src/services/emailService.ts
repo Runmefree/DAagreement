@@ -41,7 +41,10 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
 /* ---------------- HELPERS ---------------- */
 
 export function generateSigningLink(agreementId: number): string {
-  const baseUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+  const baseUrl = process.env.FRONTEND_URL;
+  if (!baseUrl) {
+    throw new Error('FRONTEND_URL environment variable is not set');
+  }
   return `${baseUrl}/sign/${agreementId}`;
 }
 

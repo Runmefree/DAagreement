@@ -44,7 +44,7 @@ const Documents: React.FC = () => {
       
       console.log('Fetching signed documents with token:', token.substring(0, 20) + '...');
       
-      const response = await fetch('http://localhost:5000/api/agreements/documents/signed', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/agreements/documents/signed`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -77,7 +77,7 @@ const Documents: React.FC = () => {
   const handleViewPDF = async (document: SignedDocument) => {
     // Fetch PDF from database and open in browser
     try {
-      const response = await fetch(`http://localhost:5000/api/agreements/pdf/${document.id}/signed`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/agreements/pdf/${document.id}/signed`, {
         method: 'GET'
       });
 
@@ -97,7 +97,7 @@ const Documents: React.FC = () => {
   const handleDownloadPDF = async (document: SignedDocument) => {
     // Fetch PDF from database and download
     try {
-      const response = await fetch(`http://localhost:5000/api/agreements/pdf/${document.id}/signed`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/agreements/pdf/${document.id}/signed`, {
         method: 'GET'
       });
 

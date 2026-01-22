@@ -20,7 +20,7 @@ const LoginPage: React.FC = () => {
     // Initialize Google Sign-In button
     if (window.google) {
       window.google.accounts.id.initialize({
-        client_id: '357095799558-j0sipl6qhovh51003ac47nfpimr6hgki.apps.googleusercontent.com',
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
         callback: handleGoogleSuccess
       });
       

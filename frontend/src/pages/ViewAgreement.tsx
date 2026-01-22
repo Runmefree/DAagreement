@@ -35,7 +35,7 @@ const ViewAgreement: React.FC = () => {
   const fetchAgreement = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/agreements/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/agreements/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -74,7 +74,7 @@ const ViewAgreement: React.FC = () => {
     setActionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/agreements/${agreement.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/agreements/${agreement.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ const ViewAgreement: React.FC = () => {
     setActionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/agreements/${agreement.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/agreements/${agreement.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
