@@ -3,3 +3,4 @@ declare module '*.svg' {
   const SVG: React.VFC<React.SVGProps<SVGSVGElement> & { title?: string }>
   export default SVG
 }
+/// <reference types="vite/client" />
