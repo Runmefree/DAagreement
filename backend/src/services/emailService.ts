@@ -90,10 +90,34 @@ export function generateSignedEmailBody(
     The agreement titled <strong>"${agreementTitle}"</strong> has been successfully signed.
   </p>
 
-  <p>The signed PDF is attached for your records.</p>
+  <p>The signed PDF is attached for your records. </p>
 
   <p style="font-size:12px;color:#888;">
     Digital Consent & Agreement Tracker — automated email
   </p>
+  `;
+}
+export function generateRejectionEmailBody(
+  creatorName: string,
+  recipientName: string,
+  agreementTitle: string
+): string {
+  return `
+    <p>Hello <strong>${creatorName}</strong>,</p>
+
+    <p>
+      The agreement titled <strong>"${agreementTitle}"</strong> was rejected
+      by <strong>${recipientName}</strong>.
+    </p>
+
+    <p>
+      You can log in to your dashboard to review the agreement details
+      and take further action.
+    </p>
+
+    <p style="font-size:12px;color:#888;">
+      Digital Consent & Agreement Tracker<br/>
+      This is an automated message. Please do not reply.
+    </p>
   `;
 }
