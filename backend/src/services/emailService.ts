@@ -1,6 +1,13 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Create Nodemailer transporter with Gmail
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
 
 export interface EmailOptions {
   to: string;
@@ -15,28 +22,26 @@ export interface EmailOptions {
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
-    console.log("📧 Sending email via Resend...");
+    console.log("📧 Sending email via Gmail/Nodemailer...");
     console.log("To:", options.to);
     console.log("Subject:", options.subject);
-    console.log("📌 API Key present:", !!process.env.RESEND_API_KEY);
+    console.log("📌 Email user:", process.env.EMAIL_USER);
 
-    const response = await resend.emails.send({
-      from: process.env.EMAIL_FROM || "no-reply@digitalagreement.app",
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
       to: options.to,
       subject: options.subject,
       html: options.html,
       attachments: options.attachments?.map(a => ({
         filename: a.filename,
-        content: a.content.toString("base64"),
+        content: a.content,
+        contentType: a.contentType,
       })),
-    });
+    };
 
-    if (response.error) {
-      console.error("❌ Resend error:", response.error);
-      return false;
-    }
+    const response = await transporter.sendMail(mailOptions);
 
-    console.log("✅ Email sent successfully - ID:", response.data?.id);
+    console.log("✅ Email sent successfully - ID:", response.messageId);
     return true;
   } catch (error) {
     console.error("❌ Email sending failed:", error);
