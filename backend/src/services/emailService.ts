@@ -18,8 +18,9 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
     console.log("📧 Sending email via Resend...");
     console.log("To:", options.to);
     console.log("Subject:", options.subject);
+    console.log("📌 API Key present:", !!process.env.RESEND_API_KEY);
 
-    await resend.emails.send({
+    const response = await resend.emails.send({
       from: process.env.EMAIL_FROM || "no-reply@digitalagreement.app",
       to: options.to,
       subject: options.subject,
@@ -30,7 +31,12 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
       })),
     });
 
-    console.log("✅ Email sent successfully");
+    if (response.error) {
+      console.error("❌ Resend error:", response.error);
+      return false;
+    }
+
+    console.log("✅ Email sent successfully - ID:", response.data?.id);
     return true;
   } catch (error) {
     console.error("❌ Email sending failed:", error);
