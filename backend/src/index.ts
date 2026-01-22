@@ -11,7 +11,6 @@ import notificationRoutes from "./routes/notificationRoutes";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 /* =====================================================
    GLOBAL MIDDLEWARE
@@ -75,20 +74,18 @@ app.use("/api/notifications", notificationRoutes);
    START SERVER (CRITICAL)
 ===================================================== */
 
-async function startServer() {
+export async function initializeApp() {
   try {
     await initializeDatabase();
     console.log("✅ Database initialized");
-
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
+    return app;
   } catch (error) {
-    console.error("❌ Failed to start server:", error);
+    console.error("❌ Failed to initialize app:", error);
     process.exit(1);
   }
 }
 
-startServer();
+// Initialize on module load
+initializeApp();
 
 export default app;
