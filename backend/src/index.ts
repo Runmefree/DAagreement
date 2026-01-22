@@ -10,6 +10,21 @@ import notificationRoutes from './routes/notificationRoutes';
 dotenv.config();
 
 const app = express();
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: "Digital Consent & Agreement Tracker API",
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get("/api", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "API is working"
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 
 // Middleware
