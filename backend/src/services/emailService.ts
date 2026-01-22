@@ -1,12 +1,18 @@
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-// Create Nodemailer transporter with Gmail
-const transporter = nodemailer.createTransport({
+// Try Resend first, fallback to Gmail
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
+// Gmail fallback transporter
+const gmailTransporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
+  connectionTimeout: 5000,
+  socketTimeout: 5000,
 });
 
 export interface EmailOptions {
@@ -22,9 +28,40 @@ export interface EmailOptions {
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
-    console.log("📧 Sending email via Gmail/Nodemailer...");
+    console.log("📧 Attempting to send email...");
     console.log("To:", options.to);
     console.log("Subject:", options.subject);
+
+    // Try Resend first if API key exists
+    if (resend) {
+      console.log("📨 Using Resend API...");
+      try {
+        const response = await resend.emails.send({
+          from: process.env.EMAIL_FROM || "noreply@digitalagreement.app",
+          to: options.to,
+          subject: options.subject,
+          html: options.html,
+          attachments: options.attachments?.map(a => ({
+            filename: a.filename,
+            content: a.content.toString("base64"),
+          })),
+        });
+
+        if (response.error) {
+          console.error("❌ Resend error:", response.error);
+          console.log("⚠️ Falling back to Gmail...");
+        } else {
+          console.log("✅ Email sent via Resend - ID:", response.data?.id);
+          return true;
+        }
+      } catch (resendError) {
+        console.error("❌ Resend failed:", resendError);
+        console.log("⚠️ Falling back to Gmail...");
+      }
+    }
+
+    // Fallback to Gmail
+    console.log("📨 Using Gmail/Nodemailer...");
     console.log("📌 Email user:", process.env.EMAIL_USER);
 
     const mailOptions = {
@@ -39,9 +76,8 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
       })),
     };
 
-    const response = await transporter.sendMail(mailOptions);
-
-    console.log("✅ Email sent successfully - ID:", response.messageId);
+    const response = await gmailTransporter.sendMail(mailOptions);
+    console.log("✅ Email sent via Gmail - ID:", response.messageId);
     return true;
   } catch (error) {
     console.error("❌ Email sending failed:", error);
