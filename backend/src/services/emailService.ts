@@ -1,12 +1,10 @@
-import Mailgun from "mailgun.js";
-import FormData from "form-data";
+import * as SibApiV3Sdk from "@getbrevo/brevo";
 
-// Initialize Mailgun
-const mailgun = new Mailgun(FormData);
-const mg = mailgun.client({
-  username: "api",
-  key: process.env.MAILGUN_API_KEY || "",
-});
+// Initialize Brevo
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+if (process.env.BREVO_API_KEY) {
+  apiInstance.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
+}
 
 export interface EmailOptions {
   to: string;
@@ -21,33 +19,38 @@ export interface EmailOptions {
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
-    console.log("📧 Attempting to send email via Mailgun...");
+    console.log("📧 Attempting to send email via Brevo...");
     console.log("To:", options.to);
     console.log("Subject:", options.subject);
 
-    if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
-      console.error("❌ MAILGUN_API_KEY or MAILGUN_DOMAIN not configured");
+    if (!process.env.BREVO_API_KEY) {
+      console.error("❌ BREVO_API_KEY not configured");
       return false;
     }
 
-    const mailData = {
-      from: `Digital Agreement <noreply@${process.env.MAILGUN_DOMAIN}>`,
-      to: options.to,
-      subject: options.subject,
-      html: options.html,
+    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+    sendSmtpEmail.subject = options.subject;
+    sendSmtpEmail.htmlContent = options.html;
+    sendSmtpEmail.sender = {
+      name: "Digital Agreement",
+      email: "noreply@digitalagreement.app",
     };
+    sendSmtpEmail.to = [
+      {
+        email: options.to,
+      },
+    ];
 
-    const response = await mg.messages.create(
-      process.env.MAILGUN_DOMAIN,
-      mailData
-    );
+    const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
 
-    console.log("✅ Email sent via Mailgun");
-    console.log("📬 Message ID:", response.id);
+    console.log("✅ Email sent via Brevo");
+    console.log("📬 Response:", response);
     return true;
   } catch (error: any) {
-    console.error("❌ Mailgun email error:", error.message);
-    console.error("Error details:", error);
+    console.error("❌ Brevo email error:", error.message);
+    if (error.response?.body) {
+      console.error("Details:", error.response.body);
+    }
     return false;
   }
 }
