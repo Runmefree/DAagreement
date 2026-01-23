@@ -33,7 +33,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
     sendSmtpEmail.htmlContent = options.html;
     sendSmtpEmail.sender = {
       name: "Digital Agreement",
-      email: "noreply@digitalagreement.app",
+      email: process.env.GMAIL_EMAIL || "digitalagreement.system@gmail.com",
     };
     sendSmtpEmail.to = [
       {
