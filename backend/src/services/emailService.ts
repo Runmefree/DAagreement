@@ -1,9 +1,17 @@
-import sgMail from "@sendgrid/mail";
+import nodemailer from "nodemailer";
 
-// Initialize SendGrid
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
+// Create Gmail transporter using App Password
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_EMAIL || process.env.EMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD || process.env.EMAIL_PASSWORD,
+  },
+  secure: true, // TLS
+  port: 465,
+  logger: true,
+  debug: true,
+});
 
 export interface EmailOptions {
   to: string;
@@ -18,38 +26,37 @@ export interface EmailOptions {
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
-    console.log("📧 Attempting to send email via SendGrid...");
+    console.log("📧 Attempting to send email via Gmail...");
     console.log("To:", options.to);
     console.log("Subject:", options.subject);
+    console.log("From:", process.env.GMAIL_EMAIL || process.env.EMAIL_USER);
 
-    if (!process.env.SENDGRID_API_KEY) {
-      console.error("❌ SENDGRID_API_KEY not configured");
+    if (!process.env.GMAIL_APP_PASSWORD && !process.env.EMAIL_PASSWORD) {
+      console.error("❌ GMAIL_APP_PASSWORD or EMAIL_PASSWORD not configured");
       return false;
     }
 
-    const attachments = options.attachments?.map(a => ({
-      content: a.content.toString("base64"),
-      filename: a.filename,
-      type: a.contentType,
-      disposition: "attachment",
-    })) || [];
-
-    const msg = {
+    const mailOptions = {
+      from: process.env.GMAIL_EMAIL || process.env.EMAIL_USER,
       to: options.to,
-      from: process.env.SENDGRID_FROM_EMAIL || "noreply@digitalagreement.app",
       subject: options.subject,
       html: options.html,
-      attachments: attachments,
+      attachments: options.attachments?.map(a => ({
+        filename: a.filename,
+        content: a.content,
+        contentType: a.contentType,
+      })),
     };
 
-    const response = await sgMail.send(msg);
-    console.log("✅ Email sent via SendGrid - Status:", response[0].statusCode);
-    console.log("📨 Message ID:", response[0].headers?.["x-message-id"]);
+    const response = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent via Gmail - Message ID:", response.messageId);
+    console.log("📬 Response:", response.response);
     return true;
   } catch (error: any) {
-    console.error("❌ SendGrid error:", error.message);
-    if (error.response?.body?.errors) {
-      console.error("Details:", error.response.body.errors);
+    console.error("❌ Gmail email error:", error.message);
+    console.error("Error code:", error.code);
+    if (error.response) {
+      console.error("SMTP Response:", error.response);
     }
     return false;
   }
