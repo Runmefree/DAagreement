@@ -1,16 +1,11 @@
-import nodemailer from "nodemailer";
+import Mailgun from "mailgun.js";
+import FormData from "form-data";
 
-// Create Gmail transporter using App Password
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.GMAIL_EMAIL || process.env.EMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD || process.env.EMAIL_PASSWORD,
-  },
-  secure: true, // TLS
-  port: 465,
-  logger: true,
-  debug: true,
+// Initialize Mailgun
+const mailgun = new Mailgun(FormData);
+const mg = mailgun.client({
+  username: "api",
+  key: process.env.MAILGUN_API_KEY || "",
 });
 
 export interface EmailOptions {
@@ -26,38 +21,33 @@ export interface EmailOptions {
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
-    console.log("📧 Attempting to send email via Gmail...");
+    console.log("📧 Attempting to send email via Mailgun...");
     console.log("To:", options.to);
     console.log("Subject:", options.subject);
-    console.log("From:", process.env.GMAIL_EMAIL || process.env.EMAIL_USER);
 
-    if (!process.env.GMAIL_APP_PASSWORD && !process.env.EMAIL_PASSWORD) {
-      console.error("❌ GMAIL_APP_PASSWORD or EMAIL_PASSWORD not configured");
+    if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
+      console.error("❌ MAILGUN_API_KEY or MAILGUN_DOMAIN not configured");
       return false;
     }
 
-    const mailOptions = {
-      from: process.env.GMAIL_EMAIL || process.env.EMAIL_USER,
+    const mailData = {
+      from: `Digital Agreement <noreply@${process.env.MAILGUN_DOMAIN}>`,
       to: options.to,
       subject: options.subject,
       html: options.html,
-      attachments: options.attachments?.map(a => ({
-        filename: a.filename,
-        content: a.content,
-        contentType: a.contentType,
-      })),
     };
 
-    const response = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent via Gmail - Message ID:", response.messageId);
-    console.log("📬 Response:", response.response);
+    const response = await mg.messages.create(
+      process.env.MAILGUN_DOMAIN,
+      mailData
+    );
+
+    console.log("✅ Email sent via Mailgun");
+    console.log("📬 Message ID:", response.id);
     return true;
   } catch (error: any) {
-    console.error("❌ Gmail email error:", error.message);
-    console.error("Error code:", error.code);
-    if (error.response) {
-      console.error("SMTP Response:", error.response);
-    }
+    console.error("❌ Mailgun email error:", error.message);
+    console.error("Error details:", error);
     return false;
   }
 }
