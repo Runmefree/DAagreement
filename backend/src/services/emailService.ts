@@ -1,19 +1,9 @@
-import nodemailer from "nodemailer";
-import { Resend } from "resend";
+import sgMail from "@sendgrid/mail";
 
-// Try Resend first, fallback to Gmail
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-
-// Gmail fallback transporter
-const gmailTransporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-  connectionTimeout: 5000,
-  socketTimeout: 5000,
-});
+// Initialize SendGrid
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 export interface EmailOptions {
   to: string;
@@ -28,59 +18,39 @@ export interface EmailOptions {
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
-    console.log("📧 Attempting to send email...");
+    console.log("📧 Attempting to send email via SendGrid...");
     console.log("To:", options.to);
     console.log("Subject:", options.subject);
 
-    // Try Resend first if API key exists
-    if (resend) {
-      console.log("📨 Using Resend API...");
-      try {
-        const response = await resend.emails.send({
-          from: process.env.EMAIL_FROM || "noreply@digitalagreement.app",
-          to: options.to,
-          subject: options.subject,
-          html: options.html,
-          attachments: options.attachments?.map(a => ({
-            filename: a.filename,
-            content: a.content.toString("base64"),
-          })),
-        });
-
-        if (response.error) {
-          console.error("❌ Resend error:", response.error);
-          console.log("⚠️ Falling back to Gmail...");
-        } else {
-          console.log("✅ Email sent via Resend - ID:", response.data?.id);
-          return true;
-        }
-      } catch (resendError) {
-        console.error("❌ Resend failed:", resendError);
-        console.log("⚠️ Falling back to Gmail...");
-      }
+    if (!process.env.SENDGRID_API_KEY) {
+      console.error("❌ SENDGRID_API_KEY not configured");
+      return false;
     }
 
-    // Fallback to Gmail
-    console.log("📨 Using Gmail/Nodemailer...");
-    console.log("📌 Email user:", process.env.EMAIL_USER);
+    const attachments = options.attachments?.map(a => ({
+      content: a.content.toString("base64"),
+      filename: a.filename,
+      type: a.contentType,
+      disposition: "attachment",
+    })) || [];
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
+    const msg = {
       to: options.to,
+      from: process.env.SENDGRID_FROM_EMAIL || "noreply@digitalagreement.app",
       subject: options.subject,
       html: options.html,
-      attachments: options.attachments?.map(a => ({
-        filename: a.filename,
-        content: a.content,
-        contentType: a.contentType,
-      })),
+      attachments: attachments,
     };
 
-    const response = await gmailTransporter.sendMail(mailOptions);
-    console.log("✅ Email sent via Gmail - ID:", response.messageId);
+    const response = await sgMail.send(msg);
+    console.log("✅ Email sent via SendGrid - Status:", response[0].statusCode);
+    console.log("📨 Message ID:", response[0].headers?.["x-message-id"]);
     return true;
-  } catch (error) {
-    console.error("❌ Email sending failed:", error);
+  } catch (error: any) {
+    console.error("❌ SendGrid error:", error.message);
+    if (error.response?.body?.errors) {
+      console.error("Details:", error.response.body.errors);
+    }
     return false;
   }
 }
