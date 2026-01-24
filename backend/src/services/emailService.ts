@@ -22,6 +22,9 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
     console.log("📧 Attempting to send email via Brevo...");
     console.log("To:", options.to);
     console.log("Subject:", options.subject);
+    if (options.attachments) {
+      console.log(`📎 Attachments: ${options.attachments.length} file(s)`);
+    }
 
     if (!process.env.BREVO_API_KEY) {
       console.error("❌ BREVO_API_KEY not configured");
@@ -40,6 +43,16 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
         email: options.to,
       },
     ];
+
+    // ✅ ADD ATTACHMENTS if provided
+    if (options.attachments && options.attachments.length > 0) {
+      sendSmtpEmail.attachment = options.attachments.map((att) => ({
+        name: att.filename,
+        content: att.content.toString('base64'),
+        contentType: att.contentType,
+      }));
+      console.log(`✅ Added ${options.attachments.length} attachment(s) to email`);
+    }
 
     const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
 
