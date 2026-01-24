@@ -1,14 +1,21 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "env": {
-    "VITE_API_URL": "@vite_api_url",
-    "VITE_GOOGLE_CLIENT_ID": "@vite_google_client_id"
-  },
   "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
     }
   ]
 }
