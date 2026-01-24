@@ -39,7 +39,8 @@ export const SignAgreement: React.FC = () => {
       try {
         setLoading(true);
         console.log(`Fetching agreement for signing: ${id}`);
-        const response = await fetch(`http://localhost:5000/api/agreements/sign/${id}`);
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://dagreement.onrender.com';
+        const response = await fetch(`${apiUrl}/api/agreements/sign/${id}`);
 
         if (!response.ok) {
           throw new Error('Failed to load agreement');
