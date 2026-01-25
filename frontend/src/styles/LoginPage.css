@@ -108,12 +108,32 @@
 .signup-link a:hover {
   text-decoration: underline;
 }
+
 #google-button {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin: 20px 0;
+  width: 100%;
 }
 
 #google-button > div {
   width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+#google-button button {
+  width: 100% !important;
+  max-width: none !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+#google-button div[role="button"] {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
